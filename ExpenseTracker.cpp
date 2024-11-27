@@ -25,7 +25,6 @@ std::string hashPassword(std::string& password){
 	
 	
 	}
-	cout << newPassword; 
 	return newPassword; 
 }
 
@@ -44,21 +43,36 @@ sql::Connection* connectDatabase(){
 		return nullptr; 
 	}
 }
-void logIn(sql::Connection* conn)
+void logIn(sql::Connection* con)
 
 {	
-	string query = "select * from UserManagement 
-	string username , password, hashPassword, actualPassword; 
+	string query = "select * from UserManagement where username = ?" ; 
+	string username , password, hashedPassword, actualPassword; 
 	cout << "Please insert your username: " << endl; 
 	cin >> username; 
+	sql::PreparedStatement* pstmt = con->prepareStatement(query); 
+	pstmt->setString(1,username); 
+	sql::ResultSet* res = pstmt->executeQuery(); 
 
+	if (!res->next()){
+		cout << "Invaliid username" << endl; 
+		return ;
+	}
+
+	actualPassword = res->getString("password"); 
+	
 	do{
 		cout << "Please inserty our password: " << endl ;
 		cin >> password; 
-		hashpassword 		
-	
-	}while (hashPassword == actualPassword); 
+		hashedPassword = hashPassword(password);  		
+		if (hashedPassword != actualPassword){
+			cout << "Password incorrect" << endl ; 
+			
+		}
 
+
+	}while (hashedPassword != actualPassword); 
+	cout << "Log in successful" << endl ; 
 }
 
 
